@@ -6,6 +6,11 @@ import { CONTRACT_NAME, CONTRACT_ADDRESS } from '../config';
 
 class Browser extends Component {
 
+  constructor () {
+    super();
+    this.findKittyById = this.findKittyById.bind( this );
+  }
+
   componentDidMount() {
     const web3 = new Web3(window.web3.currentProvider);
 
@@ -24,6 +29,15 @@ class Browser extends Component {
     });
   }
 
+  findKittyById ( e ) {
+    e.preventDefault();
+    const contract = this.context.drizzle.contracts.CryptoKitties;
+    contract.methods
+      .getKitty( this.input.value )
+      .call()
+      .then( data => console.log( data ));
+  }
+
   render() {
     return (
       <div className="browser">
@@ -31,7 +45,15 @@ class Browser extends Component {
           Kitty Browser
         </h1>
 
-        {/* Input to type in the kitty ID here */}
+        <form onSubmit={ this.findKittyById }>
+          <label>Kitty ID:</label>
+          <input
+            type="text"
+            placeholder="Kitty ID"
+            ref={ el => this.input = el }
+          ></input>
+          <button type="submit">Find Kitty</button>
+        </form>
 
         {/* Display Kitty info here */}
       </div>
