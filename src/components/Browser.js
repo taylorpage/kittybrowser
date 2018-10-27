@@ -5,6 +5,7 @@ import KittyCoreABI from '../contracts/KittyCoreABI.json';
 import { CONTRACT_NAME, CONTRACT_ADDRESS } from '../config';
 import moment from 'moment';
 import axios from 'axios';
+import './Browser.css';
 
 class Browser extends Component {
 
@@ -73,9 +74,7 @@ class Browser extends Component {
   render() {
     return (
       <div className="browser">
-        <h1>
-          Kitty Browser
-        </h1>
+        <h1>Kitty Browser</h1>
 
         <form onSubmit={ this.submitForm }>
           <h4>Kitty ID: { this.state.id }</h4>
@@ -85,7 +84,7 @@ class Browser extends Component {
             ref={ el => this.input = el }
           ></input>
           <button type="submit">Find Kitty</button>
-          <button onClick={ this.randomizeId } type="submit">Random Kitty</button>
+          <button onClick={ this.randomizeId } type="submit">Random</button>
         </form>
 
         {
@@ -116,6 +115,7 @@ class Browser extends Component {
           this.state.image &&
           <img alt="Not Available" src={ this.state.image } />
         }
+        <div class="background"></div>
       </div>
     );
   }
