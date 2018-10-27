@@ -1,9 +1,9 @@
-button,
-input {
+.browser button,
+.browser input {
   font-size: 20px;
 }
 
-button {
+.browser button {
   padding: 10px 30px;
   background-color: rgb( 100, 100, 200 );
   border: none;
@@ -12,20 +12,20 @@ button {
   margin: 5px;
 }
 
-input {
+.browser input {
   padding: 10px 30px;
   border-radius: 5px;
   border: 1px solid blue;
 }
 
-img {
+.browser img {
   width: 400px;
   right: 0;
   top: 0;
   position: absolute;
 }
 
-.background {
+.browser .background {
   background-image: url( https://files.readme.io/ee83809-cryptokitties.jpeg );
   background-size: cover;
   background-attachment: fixed;
