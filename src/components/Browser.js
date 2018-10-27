@@ -3,14 +3,17 @@ import { object } from 'prop-types';
 import Web3 from 'web3';
 import KittyCoreABI from '../contracts/KittyCoreABI.json';
 import { CONTRACT_NAME, CONTRACT_ADDRESS } from '../config';
-import * as moment from 'moment'
+import moment from 'moment';
+import axios from 'axios';
 
 class Browser extends Component {
 
   constructor () {
     super();
     this.state = {};
+    this.submitForm = this.submitForm.bind( this );
     this.findKittyById = this.findKittyById.bind( this );
+    this.findKittyImage = this.findKittyImage.bind( this );
   }
 
   componentDidMount() {
@@ -31,20 +34,34 @@ class Browser extends Component {
     });
   }
 
-  findKittyById ( e ) {
+  submitForm ( e ) {
     e.preventDefault();
+    Promise.all([
+      this.findKittyById(),
+      this.findKittyImage()
+    ])
+    .then( kitty => {
+      const info = kitty[ 0 ];
+      const image = kitty[ 1 ];
+      this.setState({
+        genes: info.genes,
+        generation: info.generation,
+        birthTime: moment.unix( +info.birthTime ).format( 'MMMM Do YYYY' ),
+        image: image.data.image_url,
+      });
+    })
+    .then( () => this.input.value = '' );
+  }
+
+  findKittyById () {
     const contract = this.context.drizzle.contracts.CryptoKitties;
-    contract.methods
+    return contract.methods
       .getKitty( this.input.value )
-      .call()
-      .then( kitty => {
-        this.setState({
-          genes: kitty.genes,
-          generation: kitty.generation,
-          birthTime: moment.unix( +kitty.birthTime ).format( 'MMMM Do YYYY' ),
-        });
-      })
-      .then( () => this.input.value = '' );
+      .call();
+  }
+
+  findKittyImage() {
+    return axios.get( `https://api.cryptokitties.co/kitties/${ this.input.value }` );
   }
 
   render() {
@@ -54,7 +71,7 @@ class Browser extends Component {
           Kitty Browser
         </h1>
 
-        <form onSubmit={ this.findKittyById }>
+        <form onSubmit={ this.submitForm }>
           <h4>Kitty ID:</h4>
           <input
             type="text"
@@ -86,6 +103,11 @@ class Browser extends Component {
             <h4>Birth Time</h4>
             <p>{ this.state.birthTime }</p>
           </div>
+        }
+
+        {
+          this.state.image &&
+          <img src={ this.state.image } />
         }
       </div>
     );
