@@ -115,7 +115,7 @@ class Browser extends Component {
           this.state.image &&
           <img alt="Not Available" src={ this.state.image } />
         }
-        <div class="background"></div>
+        <div className="background"></div>
       </div>
     );
   }
