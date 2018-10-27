@@ -14,9 +14,10 @@ class Browser extends Component {
     this.submitForm = this.submitForm.bind( this );
     this.findKittyById = this.findKittyById.bind( this );
     this.findKittyImage = this.findKittyImage.bind( this );
+    this.randomizeId = this.randomizeId.bind( this );
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const web3 = new Web3(window.web3.currentProvider);
 
     // Initialize the contract instance
@@ -36,7 +37,7 @@ class Browser extends Component {
 
   submitForm ( e ) {
     e.preventDefault();
-    Promise.all([
+    this.input.value && Promise.all([
       this.findKittyById(),
       this.findKittyImage()
     ])
@@ -48,6 +49,7 @@ class Browser extends Component {
         generation: info.generation,
         birthTime: moment.unix( +info.birthTime ).format( 'MMMM Do YYYY' ),
         image: image.data.image_url,
+        id: this.input.value,
       });
     })
     .then( () => this.input.value = '' );
@@ -60,8 +62,12 @@ class Browser extends Component {
       .call();
   }
 
-  findKittyImage() {
+  findKittyImage () {
     return axios.get( `https://api.cryptokitties.co/kitties/${ this.input.value }` );
+  }
+
+  randomizeId () {
+    this.input.value = Math.floor( Math.random() * 37000 );
   }
 
   render() {
@@ -72,13 +78,14 @@ class Browser extends Component {
         </h1>
 
         <form onSubmit={ this.submitForm }>
-          <h4>Kitty ID:</h4>
+          <h4>Kitty ID: { this.state.id }</h4>
           <input
             type="text"
             placeholder="Kitty ID"
             ref={ el => this.input = el }
           ></input>
           <button type="submit">Find Kitty</button>
+          <button onClick={ this.randomizeId } type="submit">Random Kitty</button>
         </form>
 
         {
@@ -107,7 +114,7 @@ class Browser extends Component {
 
         {
           this.state.image &&
-          <img src={ this.state.image } />
+          <img alt="Not Available" src={ this.state.image } />
         }
       </div>
     );
