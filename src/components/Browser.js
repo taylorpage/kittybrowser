@@ -3,11 +3,13 @@ import { object } from 'prop-types';
 import Web3 from 'web3';
 import KittyCoreABI from '../contracts/KittyCoreABI.json';
 import { CONTRACT_NAME, CONTRACT_ADDRESS } from '../config';
+import * as moment from 'moment'
 
 class Browser extends Component {
 
   constructor () {
     super();
+    this.state = {};
     this.findKittyById = this.findKittyById.bind( this );
   }
 
@@ -35,7 +37,14 @@ class Browser extends Component {
     contract.methods
       .getKitty( this.input.value )
       .call()
-      .then( data => console.log( data ));
+      .then( kitty => {
+        this.setState({
+          genes: kitty.genes,
+          generation: kitty.generation,
+          birthTime: moment.unix( +kitty.birthTime ).format( 'MMMM Do YYYY' ),
+        });
+      })
+      .then( () => this.input.value = '' );
   }
 
   render() {
@@ -46,7 +55,7 @@ class Browser extends Component {
         </h1>
 
         <form onSubmit={ this.findKittyById }>
-          <label>Kitty ID:</label>
+          <h4>Kitty ID:</h4>
           <input
             type="text"
             placeholder="Kitty ID"
@@ -55,7 +64,29 @@ class Browser extends Component {
           <button type="submit">Find Kitty</button>
         </form>
 
-        {/* Display Kitty info here */}
+        {
+          this.state.genes &&
+          <div>
+            <h4>Genes</h4>
+            <p>{ this.state.genes }</p>
+          </div>
+        }
+
+        {
+          this.state.generation &&
+          <div>
+            <h4>Generation</h4>
+            <p>{ this.state.generation }</p>
+          </div>
+        }
+
+        {
+          this.state.birthTime &&
+          <div>
+            <h4>Birth Time</h4>
+            <p>{ this.state.birthTime }</p>
+          </div>
+        }
       </div>
     );
   }
