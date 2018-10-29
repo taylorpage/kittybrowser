@@ -51,9 +51,21 @@ class Browser extends Component {
         birthTime: moment.unix( +info.birthTime ).format( 'MMMM Do YYYY' ),
         image: image.data.image_url,
         id: this.input.value,
+        error: '',
       });
+      this.input.value = '';
     })
-    .then( () => this.input.value = '' );
+    .catch( () => {
+      this.setState({
+        error: 'Kitty Not Found',
+        genes: null,
+        generation: null,
+        birthTime: null,
+        image: null,
+        id: null,
+      });
+      this.input.value = '';
+    })
   }
 
   findKittyById () {
@@ -114,6 +126,11 @@ class Browser extends Component {
         {
           this.state.image &&
           <img alt="Not Available" src={ this.state.image } />
+        }
+
+        {
+          this.state.error &&
+          <h3>{ this.state.error }</h3>
         }
         <div className="background"></div>
       </div>
